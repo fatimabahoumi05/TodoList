@@ -3,9 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ZenTask - Minimal To-Do List</title>
 </head>
 <body>
-    <h1>hello</h1>
+    <div>
+        <!-- Header -->
+        <header>
+            <h1>ZenTask</h1>
+            <p>Simplify your day, one task at a time</p>
+        </header>
+        
+        <!-- Main Card -->
+        <div>
+            <!-- Input Section -->
+            <div>
+                <div>
+                    <input 
+                        type="text" 
+                        placeholder="What needs to be done?" 
+                        autocomplete="off"
+                    >
+                    <button>
+                        <i class="fas fa-plus"></i>
+                        <span>Add</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div>
+                <div>
+                    <span>0</span> items left
+                </div>
+                <div>
+                    <button>All</button>
+                    <button>Active</button>
+                    <button>Completed</button>
+                </div>
+                <button>Clear completed</button>
+            </div>
+            
+            <!-- Tasks List -->
+            <ul>
+                <li>
+                    <i class="fas fa-tasks"></i>
+                    <p>No tasks yet. Add one above!</p>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Empty State -->
+        <div style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <h3>All caught up!</h3>
+            <p>You've completed all your tasks. Enjoy your free time or add a new task to get started.</p>
+        </div>
+    </div>
 </body>
 </html>
