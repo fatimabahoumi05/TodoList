@@ -4,17 +4,16 @@
     padding: 0;
 }
 
-body{
-    font-family: 'poppins', sans-serif ;
+body {
+    font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     padding: 20px;
-    background-image: url('blackpink1.jpg');
-    background-size: cover;       /* Couvre tout l'espace */
-    background-position: center;  /* Centre l'image */
-    background-repeat: no-repeat; /* Empêche la répétition */
-    background-attachment: fixed; /* Fixe l'image lors du défilement */
+    background-image: url('images/blackpink1.jpg'); /* Chemin relatif */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     margin: 0;
-    min-height: 100vh;
 }
 
 /* Container */
