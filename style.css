@@ -8,7 +8,7 @@ body {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     padding: 20px;
-    background-image: url('images/blackpink1.jpg'); /* Chemin relatif */
+    background-image: url('images/pinkdotwhite.jpg'); /* Chemin relatif */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -199,6 +199,7 @@ body {
         text-align: center;
     }
 }
+
 /* Notification */
 .notification{
     display: flex;
