@@ -2,47 +2,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>To-Do-List</title>
 </head>
 <body>
-    <script src="script.js"></script>
     <div class="main-container">
         <!-- Header -->
-        <header class="header">
-            <h1 class="welcometext">Welcome to your dashboard</h1>
-            <p class="head-text">write down your tasks for today!!</p>
+        <header class="header"> <!-- app-header -->
+            <h1 class="welcometext">Welcome to your dashboard</h1> <!-- app-title -->
+            <p class="head-text">write down your tasks for today!!</p><!-- app-subtitle -->
         </header>
     
         <!--main div-->
-        <div class="card">
+        <div class="card">  <!--todo-card-->
             <!--input div-->
             <div class="input-section">
                 <div class="input-container">
                     <input type="text" id="taskInput" placeholder="What are tasks that need to be done?">
 
-                    <button id="addtaskbtn">
+                    <button id="addtaskbtn"> 
                         <i class="fas fa-plus"></i>
-                        <span>+ADD</span></button>
+                        <span>ADD</span></button>
                 </div>
             </div>
 
             <!--filters div-->
             <div class="filters-section">
-                <div class="task-count">
+                <div class="task-count"> <!--items-count-->
                     <span id="taskCount">0</span>tasks left
                 </div>
-                <div class="filter-btns">
-                    <button data-filter="all" class="filter-btn-all">ALL</button>
+                <div class="filter-btns"><!--filter-buttons-->
+                    <button data-filter="all" class="filter-btn-all">ALL</button> <!--class="filter-btn active"-->
                     <button data-filter="active" class="filter-btn">ACTIVE</button>
                     <button data-filter="completed" class="filter-btn">COMPLETED</button>
                 </div>
-                <button id="clearbtn">Clear Completed Tasks</button>
+                <button id="clearbtn">Clear Completed Tasks</button> <!--clearCompleted-->
             </div>
 
             <!-- Tasks List -->
             <ul id="taskList"> 
-                <li class="empty"> 
+                <li class="empty"> <!--empty-state-->
                     <i class="fas fa-tasks"></i>
                     <p>No tasks yet. Add one above</p>
                 </li>
@@ -50,11 +51,12 @@
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="empty" style="display: none;">
+        <div id="emptyState" class="empty" style="display: none;"> <!--class="empty-state"-->
             <i class="fas fa-check-circle"></i>
             <h3>All caught up!</h3>
             <p>You've completed all your tasks. Keep up the good work!</p>
         </div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
