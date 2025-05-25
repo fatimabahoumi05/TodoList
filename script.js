@@ -1,168 +1,221 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const totalTasksSpan = document.getElementById('totalTasks');
-    const activeTasksSpan = document.getElementById('activeTasks');
-    const completedTasksSpan = document.getElementById('completedTasks');
+    const taskCount = document.getElementById('taskCount');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const clearCompletedBtn = document.getElementById('clearbtn');
+    const emptyState = document.getElementById('emptyState');
     
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    // Current filter
     let currentFilter = 'all';
     
-    // Initialisation
-    renderTasks();
-    updateCounter();
+    // Load tasks from localStorage
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
-    // Ajout d'une tâche
+    // Initialize the app
+    renderTasks();
+    updateTaskCount();
+    
+    // Event Listeners
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addTask();
     });
     
-    // Filtrage des tâches
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            filterBtns.forEach(b => b.classList.remove('active'));
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
             currentFilter = this.dataset.filter;
             renderTasks();
         });
     });
     
+    clearCompletedBtn.addEventListener('click', clearCompletedTasks);
+    
+    // Functions
     function addTask() {
         const taskText = taskInput.value.trim();
-        if (taskText) {
-            tasks.push({
-                id: Date.now(),
-                text: taskText,
-                completed: false
-            });
-            saveTasks();
-            taskInput.value = '';
-            renderTasks();
-            updateCounter();
+        if (!taskText) {
+            showInputError();
+            return;
         }
+        
+        const newTask = {
+            id: Date.now(),
+            text: taskText,
+            completed: false,
+            createdAt: new Date().toISOString()
+        };
+        
+        tasks.unshift(newTask);
+        saveTasks();
+        renderTasks();
+        updateTaskCount();
+        taskInput.value = '';
+        taskInput.focus();
+    }
+    
+    function showInputError() {
+        taskInput.style.borderColor = '#ef4444';
+        taskInput.style.animation = 'pulse 0.5s';
+        setTimeout(() => {
+            taskInput.style.borderColor = '#e2e8f0';
+            taskInput.style.animation = '';
+        }, 500);
     }
     
     function renderTasks() {
         taskList.innerHTML = '';
         
         const filteredTasks = tasks.filter(task => {
-            if (currentFilter === 'all') return true;
             if (currentFilter === 'active') return !task.completed;
             if (currentFilter === 'completed') return task.completed;
             return true;
         });
         
         if (filteredTasks.length === 0) {
-            const emptyMessage = document.createElement('li');
-            emptyMessage.textContent = currentFilter === 'all' 
-                ? 'Aucune tâche pour le moment' 
+            const emptyMsg = currentFilter === 'all' 
+                ? 'No tasks yet. Add one above!' 
                 : currentFilter === 'active' 
-                    ? 'Aucune tâche en cours' 
-                    : 'Aucune tâche terminée';
-            emptyMessage.style.textAlign = 'center';
-            emptyMessage.style.color = '#7f8c8d';
-            taskList.appendChild(emptyMessage);
+                    ? 'No active tasks' 
+                    : 'No completed tasks';
+                    
+            taskList.innerHTML = `
+                <li class="empty">
+                    <i class="fas ${currentFilter === 'all' ? 'fa-tasks' : currentFilter === 'active' ? 'fa-list-ul' : 'fa-check-circle'}"></i>
+                    <p>${emptyMsg}</p>
+                </li>
+            `;
+            emptyState.style.display = 'none';
             return;
         }
+        
+        emptyState.style.display = 'none';
         
         filteredTasks.forEach(task => {
             const taskItem = document.createElement('li');
             taskItem.className = 'task-item';
             taskItem.dataset.id = task.id;
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'task-checkbox';
-            checkbox.checked = task.completed;
-            checkbox.addEventListener('change', function() {
-                toggleTaskCompletion(task.id);
-            });
-            
-            const taskText = document.createElement('span');
-            taskText.className = 'task-text' + (task.completed ? ' completed' : '');
-            taskText.textContent = task.text;
-            taskText.addEventListener('dblclick', function() {
-                enableTaskEdit(task.id, taskText);
-            });
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = 'Supprimer';
-            deleteBtn.addEventListener('click', function() {
-                deleteTask(task.id);
-            });
-            
-            taskItem.appendChild(checkbox);
-            taskItem.appendChild(taskText);
-            taskItem.appendChild(deleteBtn);
-            
+            taskItem.innerHTML = `
+                <div class="task-content">
+                    <label class="checkbox-container">
+                        <input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                    </label>
+                    <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
+                </div>
+                <div class="task-actions">
+                    <button class="edit-btn"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
             taskList.appendChild(taskItem);
+        });
+        
+        // Add event listeners
+        document.querySelectorAll('.checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const taskId = parseInt(this.closest('.task-item').dataset.id);
+                toggleTaskCompletion(taskId);
+            });
+        });
+        
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const taskId = parseInt(this.closest('.task-item').dataset.id);
+                deleteTask(taskId);
+            });
+        });
+        
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', editTask);
         });
     }
     
     function toggleTaskCompletion(taskId) {
-        tasks = tasks.map(task => {
-            if (task.id === taskId) {
-                return { ...task, completed: !task.completed };
-            }
-            return task;
-        });
+        tasks = tasks.map(task => 
+            task.id === taskId ? {...task, completed: !task.completed} : task
+        );
         saveTasks();
         renderTasks();
-        updateCounter();
+        updateTaskCount();
     }
     
     function deleteTask(taskId) {
         tasks = tasks.filter(task => task.id !== taskId);
         saveTasks();
         renderTasks();
-        updateCounter();
+        updateTaskCount();
+        showNotification('Task deleted!');
     }
     
-    function enableTaskEdit(taskId, taskTextElement) {
-        const currentText = taskTextElement.textContent;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = currentText;
-        input.className = 'edit-input';
+    function editTask(e) {
+        const taskItem = e.target.closest('.task-item');
+        const taskId = parseInt(taskItem.dataset.id);
+        const task = tasks.find(task => task.id === taskId);
+        const textSpan = taskItem.querySelector('.task-text');
+        const currentText = textSpan.textContent;
         
-        taskTextElement.replaceWith(input);
-        input.focus();
+        textSpan.innerHTML = `
+            <input type="text" value="${currentText}" class="edit-input">
+            <button class="save-edit">Save</button>
+        `;
+        
+        const editInput = textSpan.querySelector('.edit-input');
+        editInput.focus();
         
         function saveEdit() {
-            const newText = input.value.trim();
+            const newText = editInput.value.trim();
             if (newText && newText !== currentText) {
-                tasks = tasks.map(task => {
-                    if (task.id === taskId) {
-                        return { ...task, text: newText };
-                    }
-                    return task;
-                });
+                task.text = newText;
                 saveTasks();
+                renderTasks();
+                showNotification('Task updated!');
+            } else {
+                renderTasks();
             }
-            renderTasks();
         }
         
-        input.addEventListener('blur', saveEdit);
-        input.addEventListener('keypress', function(e) {
+        editInput.addEventListener('blur', saveEdit);
+        editInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') saveEdit();
         });
     }
     
-    function updateCounter() {
-    const total = tasks.length;
-    const completed = tasks.filter(task => task.completed).length;
-    const active = total - completed;
+    function clearCompletedTasks() {
+        tasks = tasks.filter(task => !task.completed);
+        saveTasks();
+        renderTasks();
+        updateTaskCount();
+        showNotification('Completed tasks cleared!');
+    }
     
-    totalTasksSpan.textContent = `${total} tâche${total !== 1 ? 's' : ''}`;
-    activeTasksSpan.textContent = `${active} en cours`;
-    completedTasksSpan.textContent = `${completed} terminée${completed !== 1 ? 's' : ''}`;
+    function updateTaskCount() {
+        const activeTasks = tasks.filter(task => !task.completed).length;
+        taskCount.textContent = activeTasks;
+        taskCount.classList.add('pulse');
+        setTimeout(() => taskCount.classList.remove('pulse'), 1000);
     }
     
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+    
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }, 2000);
     }
 });
