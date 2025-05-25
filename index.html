@@ -1,57 +1,58 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do-List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <title>To-Do-List</title>
 </head>
 <body>
     <div class="main-container">
         <!-- Header -->
-        <header class="header"> <!-- app-header -->
-            <h1 class="welcometext">Welcome to your dashboard</h1> <!-- app-title -->
-            <p class="head-text">write down your tasks for today!!</p><!-- app-subtitle -->
+        <header class="app-header">
+            <h1 class="welcomeText">Welcome to your dashboard</h1>
+            <p class="subtitle">write down your tasks for today!!</p>
         </header>
-    
+        
         <!--main div-->
-        <div class="card">  <!--todo-card-->
+        <div class="todo-card">
             <!--input div-->
             <div class="input-section">
                 <div class="input-container">
-                    <input type="text" id="taskInput" placeholder="What are tasks that need to be done?">
-
-                    <button id="addtaskbtn"> 
+                    <input type="text" id="taskInput" placeholder="What are tasks that need to be done?" autocomplete="off">
+                    <button id="addTaskBtn">
                         <i class="fas fa-plus"></i>
-                        <span>ADD</span></button>
+                        <span>Add</span>
+                    </button>
                 </div>
             </div>
 
             <!--filters div-->
             <div class="filters-section">
-                <div class="task-count"> <!--items-count-->
-                    <span id="taskCount">0</span>tasks left
+                <div class="items-count">
+                    <span id="taskCount">0</span> items left
                 </div>
-                <div class="filter-btns"><!--filter-buttons-->
-                    <button data-filter="all" class="filter-btn-all">ALL</button> <!--class="filter-btn active"-->
-                    <button data-filter="active" class="filter-btn">ACTIVE</button>
-                    <button data-filter="completed" class="filter-btn">COMPLETED</button>
+                <div class="filter-buttons">
+                    <button data-filter="all" class="filter-btn active">All</button>
+                    <button data-filter="active" class="filter-btn">Active</button>
+                    <button data-filter="completed" class="filter-btn">Completed</button>
                 </div>
-                <button id="clearbtn">Clear Completed Tasks</button> <!--clearCompleted-->
+                <button id="clearbtn">Clear Completed Tasks</button>
             </div>
-
+            
             <!-- Tasks List -->
-            <ul id="taskList"> 
-                <li class="empty"> <!--empty-state-->
+            <ul id="taskList">
+                <li class="empty">
                     <i class="fas fa-tasks"></i>
-                    <p>No tasks yet. Add one above</p>
+                    <p>No tasks yet. Add one above!</p>
                 </li>
             </ul>
         </div>
-
+        
         <!-- Empty State -->
-        <div id="emptyState" class="empty" style="display: none;"> <!--class="empty-state"-->
+        <div id="emptyState" class="empty" style="display: none;">
             <i class="fas fa-check-circle"></i>
             <h3>All caught up!</h3>
             <p>You've completed all your tasks. Keep up the good work!</p>

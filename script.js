@@ -1,80 +1,168 @@
-// JavaScript simple pour ajouter/supprimer/filter les tâches
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function() {
     const taskInput = document.getElementById('taskInput');
-    const addBtn = document.getElementById('addaskbtn');
+    const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
-    const taskCount = document.getElementById('taskCount');
-    const filterButtons = document.querySelectorAll('.filter-btns button');
-    const clearBtn = document.getElementById('clearbtn');
-
-    let tasks = [];
-
-    function renderTasks(filter = 'all') {
-      taskList.innerHTML = '';
-
-      const filteredTasks = tasks.filter(task => {
-        if (filter === 'active') return !task.completed;
-        if (filter === 'completed') return task.completed;
-        return true;
-      });
-
-      if (filteredTasks.length === 0) {
-        taskList.innerHTML = '<li class="empty">No tasks here!</li>';
-      } else {
-        filteredTasks.forEach((task, index) => {
-          const li = document.createElement('li');
-          li.textContent = task.text;
-          li.className = task.completed ? 'completed' : '';
-          li.addEventListener('click', () => {
-            tasks[index].completed = !tasks[index].completed;
-            updateTaskCount();
-            renderTasks(currentFilter);
-          });
-          taskList.appendChild(li);
-        });
-      }
-    }
-
-    function updateTaskCount() {
-      const count = tasks.filter(task => !task.completed).length;
-      taskCount.textContent = count;
-    }
-
-    function addTask() {
-      const text = taskInput.value.trim();
-      if (text === '') return;
-
-      tasks.push({ text, completed: false });
-      taskInput.value = '';
-      updateTaskCount();
-      renderTasks(currentFilter);
-    }
-
-    addBtn.addEventListener('click', addTask);
-
-    taskInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') addTask();
-    });
-
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const totalTasksSpan = document.getElementById('totalTasks');
+    const activeTasksSpan = document.getElementById('activeTasks');
+    const completedTasksSpan = document.getElementById('completedTasks');
+    
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     let currentFilter = 'all';
-
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.getAttribute('data-filter');
-        renderTasks(currentFilter);
-      });
-    });
-
-    clearBtn.addEventListener('click', () => {
-      tasks = tasks.filter(task => !task.completed);
-      updateTaskCount();
-      renderTasks(currentFilter);
-    });
-
-    // Initial render
+    
+    // Initialisation
     renderTasks();
-    updateTaskCount();
-
+    updateCounter();
+    
+    // Ajout d'une tâche
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') addTask();
+    });
+    
+    // Filtrage des tâches
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            renderTasks();
+        });
+    });
+    
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            tasks.push({
+                id: Date.now(),
+                text: taskText,
+                completed: false
+            });
+            saveTasks();
+            taskInput.value = '';
+            renderTasks();
+            updateCounter();
+        }
+    }
+    
+    function renderTasks() {
+        taskList.innerHTML = '';
+        
+        const filteredTasks = tasks.filter(task => {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'active') return !task.completed;
+            if (currentFilter === 'completed') return task.completed;
+            return true;
+        });
+        
+        if (filteredTasks.length === 0) {
+            const emptyMessage = document.createElement('li');
+            emptyMessage.textContent = currentFilter === 'all' 
+                ? 'Aucune tâche pour le moment' 
+                : currentFilter === 'active' 
+                    ? 'Aucune tâche en cours' 
+                    : 'Aucune tâche terminée';
+            emptyMessage.style.textAlign = 'center';
+            emptyMessage.style.color = '#7f8c8d';
+            taskList.appendChild(emptyMessage);
+            return;
+        }
+        
+        filteredTasks.forEach(task => {
+            const taskItem = document.createElement('li');
+            taskItem.className = 'task-item';
+            taskItem.dataset.id = task.id;
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'task-checkbox';
+            checkbox.checked = task.completed;
+            checkbox.addEventListener('change', function() {
+                toggleTaskCompletion(task.id);
+            });
+            
+            const taskText = document.createElement('span');
+            taskText.className = 'task-text' + (task.completed ? ' completed' : '');
+            taskText.textContent = task.text;
+            taskText.addEventListener('dblclick', function() {
+                enableTaskEdit(task.id, taskText);
+            });
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Supprimer';
+            deleteBtn.addEventListener('click', function() {
+                deleteTask(task.id);
+            });
+            
+            taskItem.appendChild(checkbox);
+            taskItem.appendChild(taskText);
+            taskItem.appendChild(deleteBtn);
+            
+            taskList.appendChild(taskItem);
+        });
+    }
+    
+    function toggleTaskCompletion(taskId) {
+        tasks = tasks.map(task => {
+            if (task.id === taskId) {
+                return { ...task, completed: !task.completed };
+            }
+            return task;
+        });
+        saveTasks();
+        renderTasks();
+        updateCounter();
+    }
+    
+    function deleteTask(taskId) {
+        tasks = tasks.filter(task => task.id !== taskId);
+        saveTasks();
+        renderTasks();
+        updateCounter();
+    }
+    
+    function enableTaskEdit(taskId, taskTextElement) {
+        const currentText = taskTextElement.textContent;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentText;
+        input.className = 'edit-input';
+        
+        taskTextElement.replaceWith(input);
+        input.focus();
+        
+        function saveEdit() {
+            const newText = input.value.trim();
+            if (newText && newText !== currentText) {
+                tasks = tasks.map(task => {
+                    if (task.id === taskId) {
+                        return { ...task, text: newText };
+                    }
+                    return task;
+                });
+                saveTasks();
+            }
+            renderTasks();
+        }
+        
+        input.addEventListener('blur', saveEdit);
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') saveEdit();
+        });
+    }
+    
+    function updateCounter() {
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.completed).length;
+    const active = total - completed;
+    
+    totalTasksSpan.textContent = `${total} tâche${total !== 1 ? 's' : ''}`;
+    activeTasksSpan.textContent = `${active} en cours`;
+    completedTasksSpan.textContent = `${completed} terminée${completed !== 1 ? 's' : ''}`;
+    }
+    
+    function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 });
