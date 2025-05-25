@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
+    //DOM elements
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
@@ -8,17 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearCompletedBtn = document.getElementById('clearbtn');
     const emptyState = document.getElementById('emptyState');
     
-    // Current filter
+    //current filter
     let currentFilter = 'all';
     
-    // Load tasks from localStorage
+    //load tasks from localStorage
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
-    // Initialize the app
+    //initialize the website
     renderTasks();
     updateTaskCount();
     
-    // Event Listeners
+    //event Listeners
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addTask();
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     clearCompletedBtn.addEventListener('click', clearCompletedTasks);
     
-    // Functions
+    //functions
     function addTask() {
         const taskText = taskInput.value.trim();
         if (!taskText) {
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             taskList.appendChild(taskItem);
         });
         
-        // Add event listeners
+        //add event listeners
         document.querySelectorAll('.checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const taskId = parseInt(this.closest('.task-item').dataset.id);
@@ -149,9 +149,8 @@ document.addEventListener('DOMContentLoaded', function() {
         saveTasks();
         renderTasks();
         updateTaskCount();
-        showNotification('Task deleted!');
     }
-    
+
     function editTask(e) {
         const taskItem = e.target.closest('.task-item');
         const taskId = parseInt(taskItem.dataset.id);
@@ -173,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 task.text = newText;
                 saveTasks();
                 renderTasks();
-                showNotification('Task updated!');
             } else {
                 renderTasks();
             }
@@ -184,15 +182,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter') saveEdit();
         });
     }
-    
+
     function clearCompletedTasks() {
         tasks = tasks.filter(task => !task.completed);
         saveTasks();
         renderTasks();
         updateTaskCount();
-        showNotification('Completed tasks cleared!');
     }
-    
+
     function updateTaskCount() {
         const activeTasks = tasks.filter(task => !task.completed).length;
         taskCount.textContent = activeTasks;
@@ -202,20 +199,5 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-    
-    function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.innerHTML = `
-            <i class="fas fa-check-circle"></i>
-            <span>${message}</span>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 300);
-        }, 2000);
     }
 });
