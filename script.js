@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
             id: Date.now(),
             text: taskText,
             completed: false,
-            createdAt: new Date().toISOString()
         };
         
         tasks.unshift(newTask);
@@ -158,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         textSpan.innerHTML = `
             <input type="text" value="${currentText}" class="edit-input">
-            <button class="save-edit">Save</button>
         `;
         
         const editInput = textSpan.querySelector('.edit-input');
