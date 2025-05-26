@@ -191,11 +191,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateTaskCount() {
+        const totalTasks = tasks.length;
         const activeTasks = tasks.filter(task => !task.completed).length;
+        const completedTasks = totalTasks - activeTasks;
+
         taskCount.textContent = activeTasks;
-        taskCount.classList.add('pulse');
-        setTimeout(() => taskCount.classList.remove('pulse'), 1000);
+
+        const countAll = document.getElementById('countAll');
+        const countActive = document.getElementById('countActive');
+        const countCompleted = document.getElementById('countCompleted');
+
+        if (countAll && countActive && countCompleted) {
+            countAll.textContent = totalTasks;
+            countActive.textContent = activeTasks;
+            countCompleted.textContent = completedTasks;
+        }
+
+    taskCount.classList.add('pulse');
+    setTimeout(() => taskCount.classList.remove('pulse'), 1000);
     }
+
     
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
