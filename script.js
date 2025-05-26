@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const taskCount = document.getElementById('taskCount');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const clearCompletedBtn = document.getElementById('clearbtn');
-    const emptyState = document.getElementById('emptyState');
+    
     
     //current filter
     let currentFilter = 'all';
@@ -89,12 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>${emptyMsg}</p>
                 </li>
             `;
-            emptyState.style.display = 'none';
-            return;
+                        return;
         }
         
-        emptyState.style.display = 'none';
-        
+                
         filteredTasks.forEach(task => {
             const taskItem = document.createElement('li');
             taskItem.className = 'task-item';

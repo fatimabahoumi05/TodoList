@@ -156,6 +156,8 @@ body {
 /* Tasks List */
 #taskList {
     list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .task-item {
@@ -288,21 +290,6 @@ body {
     color: white;
 }
 
-
-.notification {
-    display: flex;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #230B15;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    align-items: center;
-    gap: 8px;
-    z-index: 1000;
-}
 
 /* Animations */
 @keyframes fadeOut {
