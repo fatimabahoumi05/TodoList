@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    //DOM elements
+   // Éléments du DOM
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
@@ -8,17 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearCompletedBtn = document.getElementById('clearbtn');
     
     
-    //current filter
+    // Filtre actuel
     let currentFilter = 'all';
     
-    //load tasks from localStorage
+    // Charger les tâches depuis le localStorage
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
-    //initialize the website
+    // Initialiser le site web
     renderTasks();
     updateTaskCount();
     
-    //event Listeners
+    // Écouteurs d'événements
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addTask();
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     clearCompletedBtn.addEventListener('click', clearCompletedTasks);
     
-    //functions
+    // Fonctions
     function addTask() {
         const taskText = taskInput.value.trim();
         if (!taskText) {
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
             taskList.appendChild(taskItem);
         });
         
-        //add event listeners
+       // Ajouter des écouteurs d'événements
         document.querySelectorAll('.checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const taskId = parseInt(this.closest('.task-item').dataset.id);
