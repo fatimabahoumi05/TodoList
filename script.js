@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            currentFilter = this.dataset.filter;
+            currentFilter = this.getAttribute('data-filter');;
             renderTasks();
         });
     });
@@ -88,9 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>${emptyMsg}</p>
                 </li>
             `;
-                        return;
+            return;
         }
-        
                 
         filteredTasks.forEach(task => {
             const taskItem = document.createElement('li');
@@ -132,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    
     function toggleTaskCompletion(taskId) {
         tasks = tasks.map(task => 
             task.id === taskId ? {...task, completed: !task.completed} : task
@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function editTask(e) {
-        const taskItem = e.target.closest('.task-item');
+        const taskItem = e.target.closest('.task-item'); 
         const taskId = parseInt(taskItem.dataset.id);
-        const task = tasks.find(task => task.id === taskId);
+        const task = tasks.find(task => task.id === taskId);   //find():Renvoie le premier élémentqui satisfait une condition.
         const textSpan = taskItem.querySelector('.task-text');
         const currentText = textSpan.textContent;
         
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         const editInput = textSpan.querySelector('.edit-input');
-        editInput.focus();
+        editInput.focus(); //se produit lorsqu'un élément reçoit le focus.
         
         function saveEdit() {
             const newText = editInput.value.trim();
@@ -207,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => taskCount.classList.remove('pulse'), 1000);
     }
 
-    
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
